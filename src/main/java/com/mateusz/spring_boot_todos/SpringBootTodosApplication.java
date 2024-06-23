@@ -1,4 +1,4 @@
-package com.mateusz.spring_boot_todos.spring_boot_todos;
+package com.mateusz.spring_boot_todos;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;

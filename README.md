@@ -4,7 +4,7 @@
 | ------------------------------ | -------- | --------------------------------- |
 | Retrieve All ToDos             | `GET`    | `/v1/users/{username}/todos`      |
 | Retrieve Single Specified ToDo | `GET`    | `/v1/users/{username}/todos/{id}` |
-| Delete Specified Single Todo   | `DELETE` | `/v1/users/{username}/todos{id}`  |
+| Delete Specified Single Todo   | `DELETE` | `/v1/users/{username}/todos/{id}`  |
 | Update Single Specified Todo   | `PUT`    | `/v1/users/{username}/todos/{id}` |
 | Create Single Todo             | `POST`   | `/v1/users/{username}/todos`      |
 

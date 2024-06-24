@@ -3,6 +3,7 @@ package com.mateusz.spring_boot_todos.services;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.springframework.stereotype.Service;
@@ -39,10 +40,9 @@ public class TodoService {
         todos.removeIf(predicate);
     }
 
-    public Todo findById(int id) {
-        Predicate<? super Todo> predicate = todo -> todo.getId() == id;
-        Todo todo = todos.stream().filter(predicate).findFirst().get();
-        return todo;
+    public Optional<Todo> findByIdAndUsername(int id, String username) {
+        Predicate<? super Todo> predicate = todo -> todo.getId() == id && todo.getUsername().equalsIgnoreCase(username);
+        return todos.stream().filter(predicate).findFirst();
     }
 
     public void updateTodo(@Valid Todo todo) {

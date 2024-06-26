@@ -2,12 +2,17 @@ package com.mateusz.spring_boot_todos.models;
 
 import java.time.LocalDate;
 
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.Size;
+
 //TODO: ORM - Spring Data JPA, RDBMS - H2/PostgreSQL
 public class Todo {
 
     private int id;
     private String username;
+    @Size(min = 5)
     private String description;
+    @Future
     private LocalDate targetDate;// LocalDate recommended over Date
     private boolean done;
 
@@ -19,7 +24,8 @@ public class Todo {
         this.done = done;
     }
 
-    public Todo(){}
+    public Todo() {
+    }
 
     public int getId() {
         return id;

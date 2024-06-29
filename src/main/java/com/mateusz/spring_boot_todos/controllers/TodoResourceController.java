@@ -7,6 +7,8 @@ import com.mateusz.spring_boot_todos.exception.TodoNotFoundException;
 import com.mateusz.spring_boot_todos.models.Todo;
 import com.mateusz.spring_boot_todos.services.TodoService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +17,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,21 +27,25 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping("/v1")
-public class TodoResource {
+@EnableMethodSecurity(prePostEnabled = true)
+@PreAuthorize("hasAuthority('SCOPE_ROLE_USER') and #username == authentication.name")
+public class TodoResourceController {
 
     private TodoService todoService;
 
     // constructor dependency injection
-    public TodoResource(TodoService todoService) {
+    public TodoResourceController(TodoService todoService) {
         this.todoService = todoService;
     }
 
     @GetMapping("/users/{username}/todos")
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     public List<Todo> retrieveAllTodos(@PathVariable String username) {
         return todoService.findByUsername(username);
     }
 
     @GetMapping("/users/{username}/todos/{id}")
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     public ResponseEntity<Todo> retrieveOneTodo(@PathVariable String username, @PathVariable int id) {
         Optional<Todo> todo = todoService.findByIdAndUsername(id, username);
 
@@ -48,6 +56,7 @@ public class TodoResource {
     }
 
     @DeleteMapping("/users/{username}/todos/{id}")
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     public ResponseEntity<Void> deleteOneTodo(@PathVariable String username, @PathVariable int id) {
         Optional<Todo> todo = todoService.findByIdAndUsername(id, username);
 
@@ -59,9 +68,10 @@ public class TodoResource {
     }
 
     @PutMapping("/users/{username}/todos/{id}")
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     public Todo updateOneTodo(@PathVariable String username, @PathVariable int id,
             @Valid @RequestBody Todo todo) {
-                
+
         todo.setUsername(username);
         todo.setId(id);
 
@@ -71,6 +81,7 @@ public class TodoResource {
     }
 
     @PostMapping("/users/{username}/todos")
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     public Todo createOneTodo(@PathVariable String username,
             @Valid @RequestBody Todo todo) {
         Todo createdTodo = todoService.addTodo(username, todo.getDescription(), todo.getTargetDate(), todo.isDone());

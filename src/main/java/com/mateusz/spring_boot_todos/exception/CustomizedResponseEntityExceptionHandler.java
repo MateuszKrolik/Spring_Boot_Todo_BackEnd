@@ -11,38 +11,49 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.security.access.AccessDeniedException;
+
+import com.mateusz.spring_boot_todos.DTO.ErrorDetails;
 
 @ControllerAdvice
 public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
-    public final ResponseEntity<ErrorDetails> handleAllException(Exception ex, WebRequest request)
-            throws Exception {
-        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(),
-                request.getDescription(false));
-        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+        @ExceptionHandler(Exception.class)
+        public final ResponseEntity<ErrorDetails> handleAllException(Exception ex, WebRequest request)
+                        throws Exception {
+                ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(),
+                                request.getDescription(false));
+                return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
-    @ExceptionHandler(TodoNotFoundException.class)
-    public final ResponseEntity<ErrorDetails> handleUserNotFoundException(Exception ex, WebRequest request)
-            throws Exception {
-        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(),
-                request.getDescription(false));
-        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
-    }
+        @ExceptionHandler(TodoNotFoundException.class)
+        public final ResponseEntity<ErrorDetails> handleUserNotFoundException(Exception ex, WebRequest request)
+                        throws Exception {
+                ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(),
+                                request.getDescription(false));
+                return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+        }
 
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status,
-            WebRequest request) {
+        @ExceptionHandler(AccessDeniedException.class)
+        public final ResponseEntity<ErrorDetails> handleAccessDeniedException(AccessDeniedException ex,
+                        WebRequest request) {
+                ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), "Access Denied",
+                                request.getDescription(false));
+                return new ResponseEntity<>(errorDetails, HttpStatus.FORBIDDEN);
+        }
 
-        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),
-                "Total errors are: " + ex.getErrorCount() + ", First error is: "
-                        + ex.getFieldError().getDefaultMessage(),
-                request.getDescription(false));
+        @Override
+        protected ResponseEntity<Object> handleMethodArgumentNotValid(
+                        MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status,
+                        WebRequest request) {
 
-        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+                ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),
+                                "Total errors are: " + ex.getErrorCount() + ", First error is: "
+                                                + ex.getFieldError().getDefaultMessage(),
+                                request.getDescription(false));
 
-    }
+                return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+
+        }
 
 }

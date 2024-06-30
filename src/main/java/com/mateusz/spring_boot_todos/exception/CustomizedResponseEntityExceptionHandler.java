@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 
 import com.mateusz.spring_boot_todos.DTO.ErrorDetails;
 
@@ -37,9 +38,17 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
         @ExceptionHandler(AccessDeniedException.class)
         public final ResponseEntity<ErrorDetails> handleAccessDeniedException(AccessDeniedException ex,
                         WebRequest request) {
-                ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), "Access Denied",
+                ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(),
                                 request.getDescription(false));
                 return new ResponseEntity<>(errorDetails, HttpStatus.FORBIDDEN);
+        }
+
+        @ExceptionHandler(BadCredentialsException.class)
+        public final ResponseEntity<ErrorDetails> handleBadCredentialsException(BadCredentialsException ex,
+                        WebRequest request) {
+                ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(),
+                                request.getDescription(false));
+                return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
         }
 
         @Override

@@ -2,23 +2,45 @@ package com.mateusz.spring_boot_todos.models;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Size;
 
-//TODO: ORM - Spring Data JPA, RDBMS - H2/PostgreSQL
+@Entity
 public class Todo {
 
-    private int id;
-    private String username;
+    @Id
+    @GeneratedValue
+    private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "username", referencedColumnName = "username")
+    @JsonIgnore
+    private User user;
+
+    @JsonGetter("username")
+    public String getUsername() {
+        return this.user.getUsername();
+    }
+
     @Size(min = 5)
     private String description;
+
     @Future
     private LocalDate targetDate;// LocalDate recommended over Date
+
     private boolean done;
 
-    public Todo(int id, String username, String description, LocalDate targetDate, boolean done) {
+    public Todo(Integer id, User user, String description, LocalDate targetDate, boolean done) {
         this.id = id;
-        this.username = username;
+        this.user = user;
         this.description = description;
         this.targetDate = targetDate;
         this.done = done;
@@ -27,20 +49,20 @@ public class Todo {
     public Todo() {
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public User getUser() {
+        return user;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getDescription() {
@@ -69,7 +91,8 @@ public class Todo {
 
     @Override
     public String toString() {
-        return "Todo [id=" + id + ", username=" + username + ", description=" + description + ", targetDate="
-                + targetDate + ", done=" + done + "]";
+        return "Todo [id=" + id + ", user=" + user + ", description=" + description + ", targetDate=" + targetDate
+                + ", done=" + done + "]";
     }
+
 }

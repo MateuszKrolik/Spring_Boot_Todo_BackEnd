@@ -5,6 +5,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mateusz.spring_boot_todos.DTO.JwtTokenRequest;
@@ -12,6 +13,7 @@ import com.mateusz.spring_boot_todos.DTO.JwtTokenResponse;
 import com.mateusz.spring_boot_todos.services.JwtTokenService;
 
 @RestController
+@RequestMapping("/v1")
 public class JwtAuthenticationController {
 
     private final JwtTokenService tokenService;
@@ -24,7 +26,9 @@ public class JwtAuthenticationController {
         this.authenticationManager = authenticationManager;
     }
 
-    @PostMapping("/authenticate")
+    @PostMapping(value = "/login", consumes = { "application/json", "application/xml" }, produces = {
+            "application/json",
+            "application/xml" })
     public ResponseEntity<JwtTokenResponse> createToken(
             @RequestBody JwtTokenRequest jwtTokenRequest) {
 

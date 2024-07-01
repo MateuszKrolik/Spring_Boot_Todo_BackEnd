@@ -28,26 +28,28 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
-@RequestMapping("/v1")
+@RequestMapping(value = "/v1")
 @EnableMethodSecurity(prePostEnabled = true)
 @PreAuthorize("hasAuthority('SCOPE_ROLE_USER') and #username == authentication.name")
 public class TodoJpaResourceController {
 
     private final TodoRepository todoRepository;
-    private final UserRepository userRepository; 
+    private final UserRepository userRepository;
 
     public TodoJpaResourceController(TodoRepository todoRepository, UserRepository userRepository) {
         this.todoRepository = todoRepository;
-        this.userRepository = userRepository; 
+        this.userRepository = userRepository;
     }
 
-    @GetMapping("/users/{username}/todos")
+    @GetMapping(value = "/users/{username}/todos", produces = { "application/json",
+            "application/xml" })
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     public List<Todo> retrieveAllTodos(@PathVariable String username) {
         return todoRepository.findByUser_Username(username);
     }
 
-    @GetMapping("/users/{username}/todos/{id}")
+    @GetMapping(value = "/users/{username}/todos/{id}", produces = { "application/json",
+            "application/xml" })
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     public ResponseEntity<Todo> retrieveOneTodo(@PathVariable String username, @PathVariable Integer id) {
         Todo todo = todoRepository.findById(id)
@@ -57,7 +59,8 @@ public class TodoJpaResourceController {
         return ResponseEntity.ok(todo);
     }
 
-    @DeleteMapping("/users/{username}/todos/{id}")
+    @DeleteMapping(value = "/users/{username}/todos/{id}", produces = { "application/json",
+            "application/xml" })
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     public ResponseEntity<Void> deleteOneTodo(@PathVariable String username, @PathVariable Integer id) {
         Todo todo = todoRepository.findById(id)
@@ -68,7 +71,9 @@ public class TodoJpaResourceController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/users/{username}/todos/{id}")
+    @PutMapping(value = "/users/{username}/todos/{id}", consumes = { "application/json",
+            "application/xml" }, produces = { "application/json",
+                    "application/xml" })
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     public ResponseEntity<Todo> updateOneTodo(@PathVariable String username, @PathVariable Integer id,
             @Valid @RequestBody Todo todo) {
@@ -83,20 +88,20 @@ public class TodoJpaResourceController {
         return ResponseEntity.ok(updatedTodo);
     }
 
-
-    @PostMapping("/users/{username}/todos")
+    @PostMapping(value = "/users/{username}/todos", consumes = { "application/json", "application/xml" }, produces = {
+            "application/json",
+            "application/xml" })
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     public ResponseEntity<?> createOneTodo(@PathVariable String username,
-                                           @Valid @RequestBody Todo todo) {
+            @Valid @RequestBody Todo todo) {
         Optional<User> userOptional = userRepository.findByUsername(username);
         if (!userOptional.isPresent()) {
-            return ResponseEntity.notFound().build(); 
+            return ResponseEntity.notFound().build();
         }
         User user = userOptional.get();
         todo.setUser(user);
         Todo savedTodo = todoRepository.save(todo);
         return ResponseEntity.ok(savedTodo);
     }
-
 
 }

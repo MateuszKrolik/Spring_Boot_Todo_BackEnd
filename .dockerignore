@@ -36,3 +36,4 @@ README.md
 postgres.sh
 images/
 schema.sql
+gcloud_custom.sh

@@ -19,7 +19,10 @@ public class SpringBootTodosApplication {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**").allowedMethods("*").allowedOrigins(allowedOrigin);
+				registry
+				.addMapping("/**")
+				.allowedMethods("*")
+				.allowedOrigins(allowedOrigin);
 			}
 		};
 	}

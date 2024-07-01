@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mateusz.spring_boot_todos.DTO.UserRegistrationRequest;
@@ -17,6 +18,7 @@ import jakarta.validation.Valid;
 import org.springframework.security.core.userdetails.User;
 
 @RestController
+@RequestMapping("/v1")
 public class UserRegistrationController {
 
     private final JdbcUserDetailsManager userDetailsManager;
@@ -25,7 +27,9 @@ public class UserRegistrationController {
         this.userDetailsManager = userDetailsManager;
     }
 
-    @PostMapping("/signup")
+    @PostMapping(value = "/signup", consumes = { "application/json", "application/xml" }, produces = {
+            "application/json",
+            "application/xml" })
     public ResponseEntity<UserRegistrationResponse> registerUser(
             @Valid @RequestBody UserRegistrationRequest registrationRequest) {
         if (userDetailsManager.userExists(registrationRequest.username())) {

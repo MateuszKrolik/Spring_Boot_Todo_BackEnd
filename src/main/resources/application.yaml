@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: kotlin_sboot_todos_backend
+  jpa:
+    defer-datasource-initialization: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    url: jdbc:postgresql://${NEON_HOSTNAME:localhost}:${NEON_PORT:5432}/${NEON_DATABASE:todos}
+    username: ${NEON_USERNAME:postgres}
+    password: ${NEON_PASSWORD:mysecretpassword}
+
+server:
+  port: ${PORT:8080}
+  # for swagger/hal explorer to dynamically adapt to http/https
+  forward-headers-strategy: framework
+  error:
+    include-stacktrace: never
+
+logging:
+  level:
+    org:
+      springframework: info
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics
+
+# spring.sql.init.mode=always # for auto-execution of schema.sql script
